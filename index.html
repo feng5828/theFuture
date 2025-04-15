@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MicroMart 2099 - Anime Microbe Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Press Start 2P', cursive;
+      background: url('https://i.imgur.com/3U8zGJj.gif') center/cover fixed;
+      color: #fff;
+      overflow-x: hidden;
+    }
+    header {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 2em;
+      text-align: center;
+      border-bottom: 3px double #ff69b4;
+      box-shadow: 0 0 20px #ff69b4;
+    }
+    h1 {
+      font-size: 2rem;
+      color: #ff69b4;
+      animation: glow 1s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #ff69b4; }
+      to { text-shadow: 0 0 20px #ff69b4, 0 0 30px #ff1493; }
+    }
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2em;
+      padding: 2em;
+    }
+    .card {
+      background: rgba(0, 0, 0, 0.7);
+      border: 2px solid #ff69b4;
+      border-radius: 15px;
+      padding: 1em;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+    .card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px #ff69b4;
+    }
+    .card h2 {
+      color: #ff69b4;
+      margin: 0.5em 0;
+    }
+    .card p {
+      font-size: 0.7rem;
+      color: #eee;
+    }
+    .buy-button, .details-button {
+      display: inline-block;
+      margin-top: 1em;
+      padding: 0.5em 1em;
+      border: none;
+      border-radius: 5px;
+      font-family: 'Press Start 2P', cursive;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 0.7rem;
+    }
+    .buy-button {
+      background: #ff69b4;
+      color: #000;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    .buy-button:hover {
+      background: #ff1493;
+    }
+    .details-button {
+      background: transparent;
+      color: #ff69b4;
+      border: 1px solid #ff69b4;
+      margin-left: 0.5em;
+      transition: background 0.3s, color 0.3s;
+    }
+    .details-button:hover {
+      background: #ff69b4;
+      color: #000;
+    }
+    .icon {
+      font-size: 2rem;
+      margin-bottom: 0.5em;
+      color: #ff69b4;
+    }
+    .micro-img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 0.5em;
+    }
+    /* Rest of your existing styles (for cart and music toggle) here */
+    #cartIcon {
+      position: fixed;
+      top: 1em;
+      right: 1em;
+      background: #ff69b4;
+      color: #000;
+      padding: 0.7em 1.2em;
+      border-radius: 10px;
+      font-weight: bold;
+      z-index: 999;
+      box-shadow: 0 0 10px #ff69b4;
+      font-family: 'Press Start 2P', cursive;
+      cursor: pointer;
+    }
+    #cartSidebar {
+      position: fixed;
+      right: -400px;
+      top: 0;
+      height: 100%;
+      width: 300px;
+      background: #1a1a1a;
+      border-left: 4px solid #ff69b4;
+      box-shadow: -5px 0 15px rgba(255, 105, 180, 0.5);
+      padding: 1em;
+      transition: right 0.4s ease;
+      z-index: 999;
+    }
+    #cartSidebar.open {
+      right: 0;
+    }
+    #cartSidebar h3 {
+      color: #ff69b4;
+      margin-bottom: 1em;
+    }
+    .cart-item {
+      margin-bottom: 1em;
+      padding-bottom: 0.5em;
+      border-bottom: 1px dashed #ff69b4;
+    }
+    .checkout {
+      margin-top: 1.5em;
+      text-align: center;
+    }
+    .checkout button {
+      background: #ff69b4;
+      color: #000;
+      border: none;
+      padding: 0.5em 1em;
+      font-family: 'Press Start 2P', cursive;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    #musicToggle {
+      position: fixed;
+      bottom: 1em;
+      left: 1em;
+      z-index: 999;
+    }
+    #musicToggle button {
+      background: #000;
+      color: #ff69b4;
+      border: 2px solid #ff69b4;
+      padding: 0.5em 1em;
+      font-family: 'Press Start 2P', cursive;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Cart and music toggle elements remain the same -->
+  <div id="cartIcon" onclick="toggleCart()"><i class="fas fa-shopping-cart"></i> <span id="cartCount">0</span></div>
+  <div id="cartSidebar">
+    <h3><i class="fas fa-dna"></i> Your Cart</h3>
+    <div id="cartItems"></div>
+    <div class="checkout">
+      <strong>Total: ¥<span id="cartTotal">0</span></strong><br/><br/>
+      <button onclick="checkout()">Checkout</button>
+    </div>
+  </div>
+  <div id="musicToggle">
+    <button onclick="toggleMusic()"><i class="fas fa-music"></i> Music</button>
+  </div>
+  <audio id="bgm" loop>
+    <source src="https://files.catbox.moe/y5lvb3.mp3" type="audio/mpeg" />
+  </audio>
+  <header>
+    <h1><i class="fas fa-vial-virus"></i> MicroMart 2099</h1>
+    <p>
+      <i class="fas fa-sparkles"></i> Genetically Engineered Microbes from Your Favorite Anime Universe 
+    
+    </p>
+  </header>
+  <div class="container" id="microbeGrid"></div>
+  <script>
+    const microbes = [
+      {
+        name: "Sakura Spore",
+        type: "Fungal Spirit",
+        price: 2400,
+        description: "A pink glowing spore found in cherry blossom forests of Neo-Tokyo.",
+        icon: "fa-seedling",
+        img: "images/sakura.gif",
+        detailsLink: "details/sakura-spore.html"  // Link to detailed page for this microbe
+      },
+      {
+        name: "Neonobacter EX",
+        type: "Electric Bacteria",
+        price: 3200,
+        description: "This energetic microbe powers entire mechs in cyberpunk cities.",
+        icon: "fa-bolt",
+        img: "images/neon.gif",
+        detailsLink: "details/neonobacter-ex.html"
+      },
+      {
+        name: "OtakuMyces",
+        type: "Caffeine Fungus",
+        price: 1900,
+        description: "Thrives on ramen spills and emits 8-bit soundwaves.",
+        icon: "fa-mug-hot",
+        img: "images/oatakumyces.png",
+        detailsLink: "details/otakumyces.html"
+      },
+      {
+        name: "KawaiiKoccus",
+        type: "Cute Virus",
+        price: 2700,
+        description: "Mildly infectious but extremely adorable. Causes sparkle fever.",
+        icon: "fa-star",
+        img: "images/kawaii.gif",
+        detailsLink: "details/kawaiikoccus.html"
+      },
+      {
+        name: "HikariCell",
+        type: "Light Cell",
+        price: 3000,
+        description: "Harnesses the energy of anime openings to charge devices.",
+        icon: "fa-lightbulb",
+        img: "images/hikari.gif",
+        detailsLink: "details/hikaricell.html"
+      },
+      {
+        name: "MechaPhage",
+        type: "Nano Virus",
+        price: 3500,
+        description: "Used to heal damaged android limbs at a molecular level.",
+        icon: "fa-robot",
+        img: "images/mehca.gif",
+        detailsLink: "details/mechaphage.html"
+      }
+    ];
+    
+    const grid = document.getElementById("microbeGrid");
+    const cartItems = {};
+    const cartCount = document.getElementById("cartCount");
+    const cartTotal = document.getElementById("cartTotal");
+    
+    microbes.forEach((microbe, index) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      // Creating the card HTML content with a new Details button:
+      card.innerHTML = `
+        <img src="${microbe.img}" class="micro-img" alt="${microbe.name}" />
+        <div class="icon"><i class="fas ${microbe.icon}"></i></div>
+        <h2>${microbe.name}</h2>
+        <p><strong>Type:</strong> ${microbe.type}</p>
+        <p>${microbe.description}</p>
+        <p><strong>Price:</strong> ¥${microbe.price}</p>
+        <button class="buy-button" onclick="addToCart(${index})">Add to Cart</button>
+        <a class="details-button" href="${microbe.detailsLink}">More Details</a>
+      `;
+      grid.appendChild(card);
+    });
+    
+    function addToCart(index) {
+      const item = microbes[index];
+      if (cartItems[item.name]) {
+        cartItems[item.name].qty++;
+      } else {
+        cartItems[item.name] = { ...item, qty: 1 };
+      }
+      updateCart();
+    }
+    
+    function updateCart() {
+      let totalQty = 0;
+      let totalPrice = 0;
+      const cartEl = document.getElementById("cartItems");
+      cartEl.innerHTML = "";
+      for (const key in cartItems) {
+        const item = cartItems[key];
+        totalQty += item.qty;
+        totalPrice += item.qty * item.price;
+        cartEl.innerHTML += `
+          <div class="cart-item">
+            <strong>${item.name}</strong><br/>
+            ¥${item.price} x ${item.qty}
+          </div>
+        `;
+      }
+      cartCount.textContent = totalQty;
+      cartTotal.textContent = totalPrice;
+    }
+    
+    function toggleCart() {
+      document.getElementById("cartSidebar").classList.toggle("open");
+    }
+    
+    function toggleMusic() {
+      const bgm = document.getElementById("bgm");
+      if (bgm.paused) {
+        bgm.volume = 0.3;
+        bgm.play();
+      } else {
+        bgm.pause();
+      }
+    }
+    
+    function checkout() {
+      alert("✨ Thanks for shopping at MicroMart 2099! Your microbes will be drone-delivered shortly!");
+    }
+  </script>
+</body>
+</html>
